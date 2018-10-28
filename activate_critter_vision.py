@@ -14,6 +14,7 @@ TARGET_USER = "drmichellelarue"
 TARGET_HASHTAG = "cougarornot"
 num_pages_to_fetch = 1
 
+
 def get_tweets(
     api,
     user=TARGET_USER,
@@ -115,8 +116,11 @@ def build_tweet(predictions):
     best = predictions[0]
     alternatives = predictions[1:4]
 
-    tweet_string = "I think this is a photo of a {adjective} {name} ({score:.3f}) #CougarOrNot \n\nAlternatively it could be: ".format(
-        adjective=random.choice(adjectives), name=names[best[0]], score=best[1]
+    tweet_string = "@{username} I think this is a photo of a {adjective} {name} ({score:.3f}) #CougarOrNot \n\nAlternatively it could be: ".format(
+        username=TARGET_USER,
+        adjective=random.choice(adjectives),
+        name=names[best[0]],
+        score=best[1],
     )
 
     others = [
@@ -155,10 +159,8 @@ def reply_to_tweets(target_tweets, my_tweets):
 
                 tweet_text = build_tweet(predictions)
                 print(tweet_text, len(tweet_text))
-                
-                api.PostUpdate(
-                    status=build_tweet(predictions), in_reply_to_status_id=tweet.id
-                )
+
+                api.PostUpdate(status=tweet_text, in_reply_to_status_id=tweet.id_str)
 
 
 if __name__ == "__main__":
